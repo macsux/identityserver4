@@ -1,0 +1,20 @@
+security:
+  clients:
+    - clientId: "client"
+      allowedGrantTypes:
+        - client_credentials
+        - password
+      allowedScopes:
+        - "api1"
+      clientSecrets:
+        - value: "K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols="
+  apiResources:
+    - name: "api1"
+      displayName: "my Api"
+      scopes:
+        - name: api1
+        - displayName: "my Api"
+  users:
+    - subjectId: 1
+      username: "alice"
+      password: "password"
