@@ -14,7 +14,9 @@ namespace IdentityServerDemo
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(cfg => cfg.AddYamlFile("appsettings.yml"))
+                .ConfigureAppConfiguration(cfg => 
+                    cfg.AddYamlFile("appsettings.yml")
+                        .AddYamlFile("config-repo/identityserver.yml"))
                 .AddConfigServer()
 
                 .UseStartup<Startup>();

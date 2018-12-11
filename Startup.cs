@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using IdentityServer4.Extensions;
+using IdentityServer4.Models;
+using IdentityServer4.Validation;
 
 
 namespace IdentityServerDemo
@@ -36,14 +38,18 @@ namespace IdentityServerDemo
                 .AddClientStore<ConfigClientStore>()
                 .AddProfileService<ConfigUserProfileService>()
                 .AddResourceOwnerValidator<ConfigUserResourceOwnerPasswordValidator>()
+                .AddExtensionGrantValidator<DelegationGrantValidator>()
+                .AddExtensionGrantValidator<TokenExchangeGrantValidator>()
                 .AddDeveloperSigningCredential();
-
+            
             services.AddMvc();
             services.AddOptions();
             services.Configure<SecuritySettings>(Configuration.GetSection("security"));
-
+            Client c;
+//            c.RedirectUris
             var builder = new ContainerBuilder();
             builder.Populate(services);
+//            builder.RegisterType<DelegationGrantValidator>().As<IExtensionGrantValidator>();
             var container = builder.Build();
             var security = container.Resolve<IOptionsSnapshot<SecuritySettings>>();
             var serviceProvider = new AutofacServiceProvider(container);

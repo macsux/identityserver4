@@ -43,6 +43,7 @@ namespace IdentityServerDemo
                 }
             }
 
+            context.IssuedClaims = context.Subject.Claims.ToList();
             context.LogIssuedClaims(Logger);
 
             return Task.CompletedTask;
