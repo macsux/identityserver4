@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration.Yaml;
+using Microsoft.Extensions.Hosting;
+// using Microsoft.Extensions.Hosting;
 using Pivotal.Extensions.Configuration.ConfigServer;
 
 namespace IdentityServerDemo
@@ -9,17 +11,21 @@ namespace IdentityServerDemo
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(cfg => 
-                    cfg.AddYamlFile("appsettings.yml")
-                        .AddYamlFile("config-repo/identityserver.yml"))
-                .AddConfigServer()
-
-                .UseStartup<Startup>();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+                // .ConfigureAppConfiguration(cfg => 
+                //     cfg.AddYamlFile("appsettings.yml")
+                //         .AddYamlFile("config-repo/identityserver.yml"))
+                // .AddConfigServer()
+                //
+                // .UseStartup<Startup>();
     }
 
 

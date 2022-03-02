@@ -1,0 +1,8 @@
+---
+applications:
+- name: idp-dev
+  memory: 384M
+  instances: 1
+  #path: bin\Debug\netcoreapp2.1\publish\
+  buildpacks:
+    - dotnet_core_buildpack

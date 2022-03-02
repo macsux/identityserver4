@@ -14,8 +14,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityServerDemo;
+using IdentityServerDemo.Quickstart.Account;
 
 namespace IdentityServer4.Quickstart.UI
 {
@@ -28,7 +32,7 @@ namespace IdentityServer4.Quickstart.UI
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly TestUserStore _users;
+        private readonly ConfigUserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -39,11 +43,9 @@ namespace IdentityServer4.Quickstart.UI
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
-            TestUserStore users = null)
+            ConfigUserStore users)
         {
-            // if the TestUserStore is not in DI, then we'll just use the global users collection
-            // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
+            _users = users;
 
             _interaction = interaction;
             _clientStore = clientStore;
@@ -167,6 +169,57 @@ namespace IdentityServer4.Quickstart.UI
             return View(vm);
         }
 
+        [HttpGet]
+        
+        public IActionResult Register(string redirectUrl)
+        {
+            var vm = new RegisterInputModel { ReturnUrl = redirectUrl };
+            
+            return View(vm);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterInputModel model, string button)
+        {
+            if (button == "register" && ModelState.IsValid)
+            {
+                var user = GetTestUserForModel(model);
+                var isExisting = _users.FindByUsername(model.Email) != null;
+                if (!isExisting)
+                {
+
+                    _users.Register(user);
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username));
+
+                    await HttpContext.SignInAsync(user.SubjectId, user.Username);
+                    return Redirect(model.ReturnUrl);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "That email is already registered");
+                }
+            }
+
+            if (button == "cancel")
+                return RedirectToAction("Login", new {returnUrl = model.ReturnUrl});
+
+            return View(model);
+        }
+
+        private TestUser GetTestUserForModel(RegisterInputModel model)
+        {
+            return new TestUser()
+            {
+                SubjectId = model.Email,
+                Username = model.Email,
+                Password = model.Password,
+//                Claims = new List<Claim>()
+//                {
+//                    new Claim(JwtClaimTypes.GivenName, model.FirstName),
+//                    new Claim(JwtClaimTypes.FamilyName, model.LastName),
+//
+//                }
+            };
+        }
         
         /// <summary>
         /// Show logout page

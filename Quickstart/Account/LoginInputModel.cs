@@ -9,6 +9,7 @@ namespace IdentityServer4.Quickstart.UI
     public class LoginInputModel
     {
         [Required]
+        [Display(Name = "Email")]
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }

@@ -3,26 +3,23 @@ security:
     - clientId: "gui"
       allowedGrantTypes:
         - client_credentials
-        - password
-        - delegation
-        - token-exchange
+#        - password
+#        - delegation
+#        - token-exchange
         - authorization_code
-        - implicit
+#        - implicit
       redirectUris:
+        - http://localhost:8080/login/oauth2/code/local-client
         - https://localhost:5011/signin-oidc
-      allowedScopes:
-        - "api1.read"
+        - https://local-vr2-sada.login.sys.uat.cf.az.cihs.gov.on.ca/login/callback/devidp
+        - https://pivot-astakhov.login.run.pcfone.io/login/callback/devidp
+        - https://astakhov.login.run.pivotal.io/login/callback/devidp
+      allowedScopes: # scopes that app can request
+        - api1.read
+        - openid
+      requireConsent: false # is the user prompted for concept are scopes autogranted
       clientSecrets:
-        - value: "K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols="
-    - clientId: "api1client"
-      allowedGrantTypes:
-        - client_credentials
-        - delegation
-        - token-exchange
-      allowedScopes:
-        - api2.read
-      clientSecrets:
-        - value: "K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols="
+        - value: password
   apiResources:
     - name: "api1"
       displayName: "my Api"
@@ -33,6 +30,9 @@ security:
       scopes:
         - name: api2.read
   users:
-    - subjectId: alice@pivotal.io
-      username: "alice"
-      password: "password"
+    - subjectId: andrew
+      username: andrew
+      password: 1
+    - subjectId: andrew
+      username: 1@1.1
+      password: 1
